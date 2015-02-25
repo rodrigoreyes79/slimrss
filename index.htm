@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+		<meta name="description" content="">
+		<meta name="author" content="">
+		<link rel="shortcut icon" href="img/rss32.png">
+		<link rel="manifest" href="manifest.json">
+		<title>SlimRSS</title>
+		<!-- Bootstrap core CSS -->
+		<link href="css/bootstrap.min.css" rel="stylesheet">
+		<!-- Custom styles for this template -->
+		<link href="css/login.css" rel="stylesheet">
+		<link href="css/reader.css" rel="stylesheet">
+		<!-- Just for debugging purposes. Don't actually copy this line! -->
+		<!--[if lt IE 9]><script src="../../docs-assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
+		<!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+		<!--[if lt IE 9]>
+		<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+		<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+		<![endif]-->
+	</head>
+	<body>
+		<header>
+			<form class="form-inline">
+				<img src="img/loader.gif" class="loader hidden" data-bind="css: {hidden: api.loading() < 1}"/>
+				<div id="logoPanel" class="form-group" data-bind="css: {hidden: showNews() && showMenuOptions()}">
+					<img src="img/rss32.png" style="width: 32px; height: 32px"/> 
+					<label for="inputHelpBlock">SlimRSS</label>
+				</div>
+				<div id="titlePanel" class="form-group hidden" data-bind="click: setCatsMode, if: selectedCat(), css: {hidden: !showNews() || !loggedIn() || !showMenuOptions()}">
+					<button type="button" class="btn btn-default" data-bind="click: setCatsMode"><span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span></button>
+					<label for="inputHelpBlock">
+						<span data-bind="text: selectedCat().title"></span> (<span data-bind="text: selectedCat().unreadCount"></span> / <span data-bind="text: totalCount()"></span>)
+					</label>
+				</div>
+			</form>
+		</header>
+		<div class="container-fluid ui">
+			<div class="row">
+				
+				<!-- Login Panel -->
+				<div id="loginPanel" class="container" data-bind="css: {hidden: loggedIn()}">
+					<form class="form-signin">
+						<label for="inputEmail" class="sr-only">Email address</label>
+						<input type="email" id="inputEmail" class="form-control" placeholder="Email address" required autofocus>
+						<label for="inputPassword" class="sr-only">Password</label>
+						<input type="password" id="inputPassword" class="form-control" placeholder="Password" required>
+						<button class="btn btn-lg btn-primary btn-block" type="button" data-bind="click: login">Login</button>
+					</form>
+				</div>
+				
+				<!-- Reader Panel -->
+				<div id="readerPanel" class="hidden" data-bind="css: {hidden: !loggedIn()}">
+					
+					<!-- Sidebar -->
+					<div id="sidebar" class="col-xs-12 col-sm-12 col-md-3" data-bind="css: {hidden: !showCats()}">
+						<div class="alert alert-info hidden" role="alert" data-bind="css: {hidden: totalCount() > 0}">No articles left</div>
+						<table id="categories" class="table table-hover" data-bind="css: {hidden: totalCount() < 1}">
+							<tbody data-bind="foreach: cats">
+								<tr data-bind="visible: unread > 0, click: $root.selectCat, css: {success: $root.selectedCat().id == id  && !$root.selectedCat().cat_id}">
+									<th scope="row">
+										<button type="button" class="btn btn-primary btn-sm" aria-label="Left Align" data-bind="click:$root.toggleCat, clickBubble: false">
+											<span class="glyphicon glyphicon-chevron-right" aria-hidden="true" data-bind="css: {hidden: !collapsed()}"></span>
+											<span class="glyphicon glyphicon-chevron-down" aria-hidden="true" class="hidden" data-bind="css: {hidden: collapsed()}"></span>
+										</button>
+									</th>
+									<td class="catText">
+										<span data-bind="html: title"></span>
+									</td>
+									<td class="catText unread" data-bind="text: unread"></td>
+								</tr>
+								<!-- ko foreach: subCats -->
+								<tr class="subcat" data-bind="visible: !$parent.collapsed() && unread > 0, click: $root.selectFeed, css: {success: $root.selectedCat().id == id && $root.selectedCat().cat_id}">
+									<th scope="row"></th>
+									<td class="catText title">
+										<img class="catIcon" data-bind="attr: {src: icon}"/>
+										<span data-bind="html: title"></span>
+									</td>
+									<td class="catText text-right" data-bind="text: unread"></td>
+								</tr>
+								<!-- /ko -->
+							</tbody>
+						</table>
+						<button type="button" class="btn btn-primary btn-lg btn-block" data-bind="click: updateCategories">Refresh</button>
+						<button type="button" class="btn btn-success btn-lg btn-block" data-bind="click: selectStarred"><span class="glyphicon glyphicon-star" aria-hidden="true"></span> Starred</button>
+						<button type="button" class="btn btn-lg btn-default btn-block" data-bind="click: logout">Logout</button>
+					</div>
+					
+					<!-- News -->
+					<div id="newsPanel" class="col-xs-12 col-sm-12 col-md-9" data-bind="if: $root.selectedCat(), css: {hidden: !showNews()}">
+						<h2 data-bind="text: $root.selectedCat().title"></h2>
+						<hr/>
+						<p data-bind="visible: heads().length < 1">No articles left.</p>
+						<div class="newsDetail" data-bind="foreach: heads">
+							<div class="newsBox hidden" data-bind="attr: {'id': 'head-' + id}, css: {'hidden': false, 'alert-success': marked(), 'alert-info': $root.selectedHeader() == id}">
+								<div class="feedInfo"><small><img class="catIcon" data-bind="attr: {src: icon}"/> <span data-bind="html: feed_title"></span></small></div>
+								<h4><a href="#" data-bind="click: $root.openHeader, clickBubble: false" target="_blank"><span data-bind="html: title"></span></a></h4>
+								
+								<div class="btn-group btn-group-justified newsBtnGroup" role="group" aria-label="Justified button group">
+								  <a href="#" class="btn btn-default" role="button" data-bind="click: $root.toggleStar"><span class="glyphicon glyphicon-star" aria-hidden="true"></span> Star</a>
+								  <a href="#" class="btn btn-default" role="button" data-bind="click: $root.catchup, clickBubble: false"><span class="glyphicon glyphicon-saved" aria-hidden="true"></span> Catchup</a>
+								  <a href="#" class="btn btn-default" role="button" data-bind="click: function(data){data.more(true)}, clickBubble: false, css: {hidden: more()}"><span class="glyphicon glyphicon-menu-down" aria-hidden="true"></span> More</a>
+								  <a href="#" class="btn btn-default" role="button" data-bind="click: function(data){data.more(false)}, clickBubble: false, css: {hidden: !more()}"><span class="glyphicon glyphicon-menu-up" aria-hidden="true"></span> Less</a>
+								</div>
+								
+								<div class="newsContent hidden" data-bind="css: {hidden: !more()}">
+									<div data-bind="html: content"></div>
+								</div>
+								
+							</div>
+						</div>
+						
+						<button type="button" class="btn btn-primary btn-lg btn-block" data-bind="click: markAsRead, visible: heads().length > 0 && !showStarred()">Mark Previous as Read</button>
+					</div>
+					
+					
+					<div class="col-md-12" data-bind="css: {hidden: !showLog()}">
+						<h3>Log</h3>
+						<pre data-bind="text: log"></pre>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- Bootstrap core JavaScript
+			================================================== -->
+		<!-- Placed at the end of the document so the pages load faster -->
+		<script src="js/head-1.0.3.min.js"></script>
+		<script src="js/config.js"></script>
+		<script src="js/jquery-1.11.2.min.js"></script>
+		<script src="js/jquery.cookie.js"></script>
+		<script src="js/path-0.8.4.js"></script>
+		<script src="js/bootstrap.min.js"></script>
+		<script src="js/knockout-3.2.0.js"></script>
+		<script src="js/app.js"></script>
+	</body>
+</html>
