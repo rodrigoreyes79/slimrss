@@ -1,14 +1,7 @@
 SlimRSS
 ==============
 
-A "mobile first" reader for Tiny Tiny RSS.
-
-
-What is it?
------------
-
-This mobile-oriented webapp is a client for [Tiny Tiny RSS](http://tt-rss.org)(TT-RSS).
-The webapp uses TT-RSS's [JSON API](http://tt-rss.org/redmine/projects/tt-rss/wiki/JsonApiReference).
+A "mobile first" reader for [Tiny Tiny RSS](http://tt-rss.org).
 
 
 How to use it?
