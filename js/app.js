@@ -103,17 +103,19 @@ var Controller = function(api, pref){
 	}
 	
 	self.loadDefault = function(){
-		var catPromise = self.loadCatTree();
-		var headPromise = self.loadHeadlines();
+		var catsPromise = self.loadCatTree();
+		var countsPromise = self.updateCounts();
+		var headlinesPromise = self.loadHeadlines('cat', pref.defaultFeed);
 		
 		$.when(catsPromise, headlinesPromise).done(function(cats, heads){
-			// Assigning data to model
-			var m = self.model;
-			m.cats(cats);
-			m.heads(heads.content);
-			
 			// Selecting the default cat
-			m.selectedCat(self.getCat(pref.defaultFeed));
+			var m = self.model;
+			var selCat = self.getCat(pref.defaultFeed);
+			m.selectedCat(selCat);
+			
+			// Assigning data to model
+			m.cats(cats);
+			m.heads(heads);
 		});
 	}
 	
@@ -135,14 +137,14 @@ var Controller = function(api, pref){
 				for(var i = 0; i < cats.content.categories.items.length; i++){
 					var c = cats.content.categories.items[i];
 					c = self.formatCat(c);
-					self.categories[c().id] = c;
+					self.categories[c.id] = c;
 					ret.push(c);
 					
-					for(var j = 0; j < c().items.length; j++){
-						var f = c().items[j];
+					for(var j = 0; j < c.items.length; j++){
+						var f = c.items[j];
 						f = self.formatFeed(f);
-						self.categories[f().id] = f;
-						c().feeds.push(f);
+						self.categories[f.id] = f;
+						c.feeds.push(f);
 					}
 				}
 			}
@@ -154,23 +156,59 @@ var Controller = function(api, pref){
 	}
 	
 	self.updateCounts = function(){
-		
+		api.getCounters().done(function(counters){
+			alert('');
+		});
 	}
 	
 	self.formatCat = function(c){
 		c.collapsed = ko.observable(true);
 		c.unread = ko.observable(c.unread);
 		c.feeds = ko.observableArray();
-		return ko.observable(c);
+		
+		// Compatibility
+		c.subCats = c.feeds;
+		c.title = c.name;
+		
+		return c;
 	}
 	
 	self.formatFeed = function(f){
 		f.unread = ko.observable(f.unread);
-		return ko.observable(f);
+		
+		// Compatibility
+		f.title = f.name;
+		
+		return f;
 	}
 	
-	self.loadHeadlines = function(cat){
+	self.formatHead = function(h){
+		h.more = ko.observable(h.content.length < 150);
+		h.icon = pref.rootUrl + '/feed-icons/' + h.feed_id + '.ico';
+		h.marked = ko.observable(h.marked);
+		return h;
+	}
+	
+	self.loadHeadlines = function(type, catId){
 		var d = $.Deferred();
+		
+		// There are 3 possibilities here:
+		// 1) Headlines for a category
+		// 2) Headlines for a feed
+		// 3) Starred headlines
+		var isCat = false;
+		if(type == 'cat'){
+			isCat = true;
+		}
+		var viewMode = type == 'starred' ? 'starred' : null;
+		api.getHeadlines(catId, null, null, isCat, viewMode).done(function(heads){
+			var ret = [];
+			for(var i = 0; i < heads.content.length; i++){
+				ret.push(self.formatHead(heads.content[i]));
+			}
+			d.resolve(ret);
+		});
+		
 		return d.promise();
 	}
 	
@@ -183,11 +221,12 @@ var Controller = function(api, pref){
 	// Utility methods
 	// ---------
 	self.getCat = function(catId){
-		var prefix = 'CAT:';
+		var prefix = 'FEED:';
 		if(catId > -1){
-			prefix = 'FEED:';
+			prefix = 'CAT:';
 		}
-		return self.categories[prefix + catId];
+		var ret = self.categories[prefix + catId];
+		return ret;
 	}
 }
 
@@ -195,16 +234,20 @@ var Controller = function(api, pref){
 // Initialization
 // ----------
 $(function(){
-	// Intantiating models
+	// Intantiating the API
 	api = new ApiDAO(pref);
 	
+	// Initializing the Controller and the EventHub
+	// which will "tunnel" events from the view into the Controller
 	controller = new Controller(api, pref);
 	eventHub = new EventHub();
 	eventHub.subscribe(controller);
 	
+	// Initializing the Model
 	model = new ViewModel(eventHub, pref, api);
 	controller.model = model;
 	
+	// Binding it all
 	ko.applyBindings(model);
 	
 	// Screen mode bindings

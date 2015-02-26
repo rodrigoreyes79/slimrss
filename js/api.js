@@ -16,7 +16,7 @@ function ApiDAO(pref) {
 	self.apiCall = function(data, asynch) {
 		self.loading(self.loading() + 1);
 		if (typeof(asynch) === 'undefined') asynch = true;
-		data.sid = $.cookie('g2tt_sid');
+		data.sid = $.cookie('slim_sid');
 		data = JSON.stringify(data);
 		
 		var d = $.Deferred();
@@ -26,7 +26,7 @@ function ApiDAO(pref) {
 			dataType: "text",
 			data: data,
 			asynch: asynch,
-			timeout: 5 * 1000,
+			timeout: 10 * 1000,
 			cache: false,
 			complete: function(){
 				self.loading(self.loading() - 1);
@@ -36,6 +36,8 @@ function ApiDAO(pref) {
 					data = JSON.parse(data);
 					d.resolve(data);
 				} catch (e) {
+					console.log(e);
+					console.log(e.stack);
 					d.reject(data, e);
 				}
 			}
@@ -67,6 +69,12 @@ function ApiDAO(pref) {
 	self.getUnread = function() {
 		var data = new Object();
 		data.op = "getUnread";
+		return self.apiCall(data);
+	}
+	
+	self.getCounters = function() {
+		var data = new Object();
+		data.op = "getCounters";
 		return self.apiCall(data);
 	}
 

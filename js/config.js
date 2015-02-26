@@ -4,7 +4,7 @@ var defaultCats = {
 }
 
 var pref = {
-	apiUrl: "..",
+	rootUrl: "..",
 	defaultFeed: defaultCats.ALL,
 	viewMode: 'unread',
 	orderBy: 'date_reverse',
