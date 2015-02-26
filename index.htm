@@ -21,11 +21,11 @@
 		<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
 		<![endif]-->
 	</head>
-	<body>
+	<body data-bind="eh: eventHub">
 		<header>
 			<form class="form-inline">
 				<img src="img/loader.gif" class="loader hidden" data-bind="css: {hidden: api.loading() < 1}"/>
-				<div id="logoPanel" class="form-group" data-bind="css: {hidden: showNews() && showMenuOptions()}">
+				<div id="logoPanel" class="form-group" data-bind="ehclick: 'test', css: {hidden: showNews() && showMenuOptions()}">
 					<img src="img/rss32.png" style="width: 32px; height: 32px"/> 
 					<label for="inputHelpBlock">SlimRSS</label>
 				</div>
@@ -133,6 +133,8 @@
 		<script src="js/path-0.8.4.js"></script>
 		<script src="js/bootstrap.min.js"></script>
 		<script src="js/knockout-3.2.0.js"></script>
+		<script src="js/eventhub.js"></script>
+		<script src="js/knockout.cb.js"></script>
 		<script src="js/app.js"></script>
 	</body>
 </html>
