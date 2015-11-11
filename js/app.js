@@ -249,6 +249,7 @@ function CategoriesManager() {
 			} else {
 				if(!self.index){
 					self.cats(cats.content);
+					self.selectedCat(cats.content[0]);
 				} else {
 					// Now, we only need to update the categories we already have
 					// loaded in memory.
