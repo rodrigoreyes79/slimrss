@@ -222,6 +222,49 @@ function ApiDAO(pref) {
 }
 
 // -------------------------
+// Categories Manager Object
+// -------------------------
+function CategoriesManager() {
+	var self = this;
+
+	// Categories
+	self.cats = ko.observableArray();
+	self.selectedCat = ko.observable();
+
+	self.index = {};
+
+	self.cats.subscribe(function(newVal){
+		self.index = {};
+		for(var i = 0; i < newVal.length; i++){
+			self.index[newVal[i].feed_id] = newVal[i];
+		}
+	})
+
+	self.updateCats = function(){
+		var d = $.Deferred();
+		api.getOrderedCategories().then(function(cats){
+			if(cats.content.error){
+				// Not logged in
+				d.reject();
+			} else {
+				// Now, we only need to update the categories we already have
+				// loaded in memory.
+				var content = cats.content;
+				for(var i = 0; i < content.length; i++){
+					var tmp = content[i];
+					var cat = self.index[tmp.feed_id];
+					if(cat){
+						cat.unreadCount(tmp.unread);
+					}
+				}
+			}
+			d.resolve();
+		});
+		return d.promise();
+	}
+}
+
+// -------------------------
 // ViewModel object
 // -------------------------
 function ViewModel(pref, api) {
@@ -231,8 +274,9 @@ function ViewModel(pref, api) {
 	self.pref = pref;
 
 	// Categories
-	self.cats = ko.observableArray();
-	self.selectedCat = ko.observable();
+	self.catManager = new CategoriesManager();
+	self.cats = self.catManager.cats;
+	self.selectedCat = self.catManager.selectedCat;
 
 	// Headlines
 	self.heads = ko.observableArray();
@@ -380,20 +424,12 @@ function ViewModel(pref, api) {
 	
 	self.reloadCats = function(catId){
 		if(self.cats().length < 1){
-			self.updateCategories().then(function(){
-				// Let's update the selected cat with the loaded info
-				var loadedCat = ko.utils.arrayFirst(self.cats(), function(item) {
-					return item.id == catId;
-				});
-				if(loadedCat){
-					self.selectedCat(loadedCat);
-				}
-			});
+			self.catManager.updateCats();
 		}
 	}
 	
 	self.updateCategories = function(){
-		var d = $.Deferred();
+		/*var d = $.Deferred();
 		api.getOrderedCategories().then(function(cats){
 			if(cats.content.error){
 				// Not logged in
@@ -403,7 +439,8 @@ function ViewModel(pref, api) {
 			}
 			d.resolve();
 		});
-		return d.promise();
+		return d.promise();*/
+		self.catManager.updateCats();
 	}
 	
 	self.openHeader = function(head){
