@@ -95,7 +95,7 @@
 						<p data-bind="visible: heads().length < 1">No articles left.</p>
 						<div class="newsDetail" data-bind="foreach: heads">
 							<div class="newsBox hidden" data-bind="attr: {'id': 'head-' + id}, css: {'hidden': false, 'alert-success': marked(), 'alert-info': $root.selectedHeader() == id}">
-								<div class="feedInfo"><small><img class="catIcon" data-bind="attr: {src: icon}"/> <span data-bind="html: feed_title"></span></small></div>
+								<div class="feedInfo"><small><img class="catIcon" data-bind="attr: {src: icon}"/> <span data-bind="html: feed_title + ' | ' + moment.unix(updated).format('dddd, MMMM Do, h:mm a') "></span></small></div>
 								<h4><a href="#" data-bind="click: $root.openHeader, clickBubble: false" target="_blank"><span data-bind="html: title"></span></a></h4>
 								
 								<div class="btn-group btn-group-justified newsBtnGroup" role="group" aria-label="Justified button group">
@@ -105,7 +105,7 @@
 								  <a href="#" class="btn btn-default" role="button" data-bind="click: function(data){data.more(false)}, clickBubble: false, css: {hidden: !more()}"><span class="glyphicon glyphicon-menu-up" aria-hidden="true"></span> Less</a>
 								</div>
 								
-								<div class="newsContent hidden" data-bind="css: {hidden: !more()}">
+								<div class="newsContent" data-bind="if: more()">
 									<div data-bind="html: content"></div>
 								</div>
 								
@@ -133,6 +133,7 @@
 		<script src="js/path-0.8.4.js"></script>
 		<script src="js/bootstrap.min.js"></script>
 		<script src="js/knockout-3.2.0.js"></script>
+		<script src="js/moment.min.js"></script>
 		<script src="js/app.js"></script>
 	</body>
 </html>

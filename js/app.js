@@ -47,7 +47,7 @@ function ApiDAO(pref) {
 			dataType: "text",
 			data: data,
 			asynch: asynch,
-			timeout: 5 * 1000,
+			timeout: 30 * 1000,
 			cache: false,
 			complete: function(){
 				self.loading(self.loading() - 1);
