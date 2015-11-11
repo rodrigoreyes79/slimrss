@@ -429,7 +429,15 @@ function ViewModel(pref, api) {
 	
 	self.reloadCats = function(catId){
 		if(self.cats().length < 1){
-			self.catManager.updateCats();
+			self.catManager.updateCats().then(function(){
+				// Let's update the selected cat with the loaded info
+				var loadedCat = ko.utils.arrayFirst(self.cats(), function(item) {
+					return item.id == catId;
+				});
+				if(loadedCat){
+					self.selectedCat(loadedCat);
+				}
+			});
 		}
 	}
 	
