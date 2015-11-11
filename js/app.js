@@ -236,7 +236,7 @@ function CategoriesManager() {
 	self.cats.subscribe(function(newVal){
 		self.index = {};
 		for(var i = 0; i < newVal.length; i++){
-			self.index[newVal[i].feed_id] = newVal[i];
+			self.index[newVal[i].id] = newVal[i];
 		}
 	})
 
@@ -255,7 +255,7 @@ function CategoriesManager() {
 					var content = cats.content;
 					for(var i = 0; i < content.length; i++){
 						var tmp = content[i];
-						var cat = self.index[tmp.feed_id];
+						var cat = self.index[tmp.id];
 						if(cat){
 							cat.unreadCount(tmp.unread);
 						}
