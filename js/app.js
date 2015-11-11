@@ -231,7 +231,7 @@ function CategoriesManager() {
 	self.cats = ko.observableArray();
 	self.selectedCat = ko.observable();
 
-	self.index = {};
+	self.index = null;
 
 	self.cats.subscribe(function(newVal){
 		self.index = {};
@@ -247,14 +247,18 @@ function CategoriesManager() {
 				// Not logged in
 				d.reject();
 			} else {
-				// Now, we only need to update the categories we already have
-				// loaded in memory.
-				var content = cats.content;
-				for(var i = 0; i < content.length; i++){
-					var tmp = content[i];
-					var cat = self.index[tmp.feed_id];
-					if(cat){
-						cat.unreadCount(tmp.unread);
+				if(!self.index){
+					self.cats(cats.content);
+				} else {
+					// Now, we only need to update the categories we already have
+					// loaded in memory.
+					var content = cats.content;
+					for(var i = 0; i < content.length; i++){
+						var tmp = content[i];
+						var cat = self.index[tmp.feed_id];
+						if(cat){
+							cat.unreadCount(tmp.unread);
+						}
 					}
 				}
 			}
