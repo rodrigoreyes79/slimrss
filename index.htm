@@ -69,7 +69,7 @@
 									<td class="catText">
 										<span data-bind="html: title"></span>
 									</td>
-									<td class="catText unread" data-bind="text: unread"></td>
+									<td class="catText unread" data-bind="text: unreadCount"></td>
 								</tr>
 								<!-- ko foreach: subCats -->
 								<tr class="subcat" data-bind="visible: !$parent.collapsed() && unread > 0, click: $root.selectFeed, css: {success: $root.selectedCat().id == id && $root.selectedCat().cat_id}">
@@ -78,7 +78,7 @@
 										<img class="catIcon" data-bind="attr: {src: icon}"/>
 										<span data-bind="html: title"></span>
 									</td>
-									<td class="catText text-right" data-bind="text: unread"></td>
+									<td class="catText text-right" data-bind="text: unreadCount"></td>
 								</tr>
 								<!-- /ko -->
 							</tbody>
