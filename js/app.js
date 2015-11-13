@@ -66,6 +66,7 @@ function ApiDAO(pref) {
 	}
 
 	self.login = function(username, password) {
+		$.removeCookie('g2tt_sid');
 		var data = {
 			'op': 'login',
 			'user': username,
