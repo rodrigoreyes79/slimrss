@@ -341,7 +341,7 @@ function ViewModel(pref, api) {
 	}
 	
 	self.logout = function() {
-		$.cookie('g2tt_sid', '');
+		$.removeCookie('g2tt_sid');
 		self.loggedIn(false);
 	}
 	
