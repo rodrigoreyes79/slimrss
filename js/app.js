@@ -67,6 +67,7 @@ function ApiDAO(pref) {
 
 	self.login = function(username, password) {
 		$.removeCookie('g2tt_sid');
+		$.removeCookie('ttrss_api_sid');
 		var data = {
 			'op': 'login',
 			'user': username,
