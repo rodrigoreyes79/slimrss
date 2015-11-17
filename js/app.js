@@ -26,7 +26,10 @@ function ApiDAO(pref) {
 	var self = this;
 	self.loading = ko.observable(0);
 
-	var airbrake = new AirbrakeClient({projectId: 117794, projectKey: '9c966f7b6cdaee9dfb114f3cc2f1451f'});
+	var airbrake = new airbrakeJs.Client({projectId: 117794, projectKey: '9c966f7b6cdaee9dfb114f3cc2f1451f'});
+	if (window.jQuery) {
+		airbrakeJs.instrumentation.jquery(airbrake, jQuery);
+	}
 	
 	// Binding global events
 	$(document).bind("ajaxStop", function(){
