@@ -60,7 +60,7 @@
 						<div class="alert alert-info hidden" role="alert" data-bind="css: {hidden: totalCount() > 0}">No articles left</div>
 						<table id="categories" class="table table-hover" data-bind="css: {hidden: totalCount() < 1}">
 							<tbody data-bind="foreach: cats">
-								<tr data-bind="visible: unread > 0, click: $root.selectCat, css: {success: $root.selectedCat().id == id  && !$root.selectedCat().cat_id}">
+								<tr data-bind="visible: unreadCount() > 0, click: $root.selectCat, css: {success: $root.selectedCat().id == id  && !$root.selectedCat().cat_id}">
 									<th scope="row">
 										<button type="button" class="btn btn-primary btn-sm" aria-label="Left Align" data-bind="click:$root.toggleCat, clickBubble: false">
 											<span class="glyphicon glyphicon-chevron-right" aria-hidden="true" data-bind="css: {hidden: !collapsed()}"></span>
@@ -73,7 +73,7 @@
 									<td class="catText unread" data-bind="text: unreadCount"></td>
 								</tr>
 								<!-- ko foreach: subCats -->
-								<tr class="subcat" data-bind="visible: !$parent.collapsed() && unread > 0, click: $root.selectFeed, css: {success: $root.selectedCat().id == id && $root.selectedCat().cat_id}">
+								<tr class="subcat" data-bind="visible: !$parent.collapsed() && unreadCount() > 0, click: $root.selectFeed, css: {success: $root.selectedCat().id == id && $root.selectedCat().cat_id}">
 									<th scope="row"></th>
 									<td class="catText title">
 										<img class="catIcon" data-bind="attr: {src: icon}"/>
