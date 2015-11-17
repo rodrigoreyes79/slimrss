@@ -35,7 +35,12 @@ function ApiDAO(pref) {
 	$(document).bind("ajaxStop", function(){
 		self.loading(0);
 	}).bind("ajaxError", function(jqXHR, textStatus, settings, thrownError){
-		airbrake.push(textStatus);
+		airbrake.push({
+			'readyState': textStatus.readyState,
+			'responseText': textStatus.responseText,
+			'status': textStatus.status,
+			'statusText': textStatus.statusText
+		});
 		alert('Error: ' + textStatus.statusText);
 		console.log(textStatus);
 	});
