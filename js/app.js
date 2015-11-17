@@ -25,11 +25,14 @@ function PrefModel(feed, viewMode, orderBy, feedSort, rootUrl) {
 function ApiDAO(pref) {
 	var self = this;
 	self.loading = ko.observable(0);
+
+	var airbrake = new AirbrakeClient({projectId: 117794, projectKey: '9c966f7b6cdaee9dfb114f3cc2f1451f'});
 	
 	// Binding global events
 	$(document).bind("ajaxStop", function(){
 		self.loading(0);
-	}).bind("ajaxError", function(jqXHR, textStatus){
+	}).bind("ajaxError", function(jqXHR, textStatus, settings, thrownError){
+		airbrake.push(textStatus);
 		alert('Error: ' + textStatus.statusText);
 		console.log(textStatus);
 	});
