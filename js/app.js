@@ -35,7 +35,7 @@ function ApiDAO(pref) {
 	$(document).bind("ajaxStop", function(){
 		self.loading(0);
 	}).bind("ajaxError", function(jqXHR, textStatus, settings, thrownError){
-		airbrake.push({
+		airbrake.push(JSON.stringify({
 			'readyState': textStatus.readyState,
 			'responseText': textStatus.responseText,
 			'status': textStatus.status,
