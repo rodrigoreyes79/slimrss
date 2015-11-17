@@ -500,7 +500,7 @@ function ViewModel(pref, api) {
 		}
 		
 		self.markIdsAsRead(ids).then(function(){
-			heads.content[0].more(true);
+			self.heads.content[0].more(true);
 		});
 	}
 	
