@@ -40,7 +40,7 @@ function ApiDAO(pref) {
 			'responseText': textStatus.responseText,
 			'status': textStatus.status,
 			'statusText': textStatus.statusText
-		});
+		}));
 		alert('Error: ' + textStatus.statusText);
 		console.log(textStatus);
 	});
